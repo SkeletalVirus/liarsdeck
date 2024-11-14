@@ -9,16 +9,104 @@
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap" rel="stylesheet">
-            <script src="liarsdeck.js"></script>
+            <script src="liarsdeck.js" defer></script>
         </head>
         <body>
+            <div class="debug debugHidden">
+                <button onclick="changeActivePlayer(player1)">
+                    <p>
+                        Switch to p1
+                    </p>
+                </button>
+                <button onclick="changeActivePlayer(player2)">
+                    <p>
+                        Switch to p2
+                    </p>
+                </button>
+                <button onclick="changeActivePlayer(player3)">
+                    <p>
+                        Switch to p3
+                    </p>
+                </button>
+                <button onclick="changeActivePlayer(player4)">
+                    <p>
+                        Switch to p4
+                    </p>
+                </button>
+                <button onclick="switchToNextActivePlayer()">
+                    <p>
+                        Switch to Next Active
+                    </p>
+                </button>
+                <button onclick="startRound()">
+                    <p>
+                        Force Start New Round
+                    </p>
+                </button>
+            </div>
             <div class="header">                
                 <p>Liars Deck</p>
             </div>
             <div class="playingField">
+                <div class="fieldCenter">
+                    <!-- <div class="cardDisplay cardFlipped"></div>
+                    <div class="cardDisplay cardFlipped"></div>
+                    <div class="cardDisplay cardFlipped"></div> -->
+
+                    <div class="startScreen">
+                        <div class="playerNameSelector">
+                            <p>
+                                Player 1:
+                            </p>
+                            <textarea name="Player 1 Name" id="player1Name" maxlength="16" rows="1" placeholder="Player 1 Name Here"></textarea>
+                        </div>
+                        <div class="playerNameSelector">
+                            <p>
+                                Player 2:
+                            </p>
+                            <textarea name="Player 2 Name" id="player2Name" maxlength="16" rows="1" placeholder="Player 2 Name Here"></textarea>
+                        </div>
+                        <div class="playerNameSelector">
+                            <p>
+                                Player 3:
+                            </p>
+                            <textarea name="Player 3 Name" id="player3Name" maxlength="16" rows="1" placeholder="Player 3 Name Here"></textarea>
+                        </div>
+                        <div class="playerNameSelector">
+                            <p>
+                                Player 4:
+                            </p>
+                            <textarea name="Player 4 Name" id="player4Name" maxlength="16" rows="1" placeholder="Player 4 Name Here"></textarea>
+                        </div>
+                        <button class="gameButton" onclick="startGame()">
+                            <p>
+                                Start Game
+                            </p>
+                        </button>
+                    </div>
+                </div>
                 <div class="fieldBottom">
                     <div class="buttons" style="justify-self: flex-start;">
-                        
+                        <button class="gameButton debugHidden" id="playHandBtn" onclick="playCards(activePlayer)">
+                            <p>
+                                Play Hand
+                            </p>
+                        </button>
+                        <button class="gameButton debugHidden" id="liarBtn" onclick="callLiar(activePlayer)">
+                            <p>
+                                Call Liar
+                            </p>
+                        </button>
+                        <button class="gameButton debugHidden" onclick="openDebug()">
+                            <p>
+                                Debug Menu
+                            </p>
+                        </button>
+                        <button class="gameButton debugHidden" id="skipTurnBtn" onclick="switchToNextActivePlayer()">
+                            <p>
+                                Skip Turn
+                            </p>
+                        </button>
                     </div>
                     <div class="currentHand">
                         <!-- <div class="card cardFlipped" id="p1 0"></div>
@@ -29,7 +117,81 @@
                     </div>
 
                     <div class="gameInfo" style="justify-self: flex-end;">
-                        
+                        <div class="playerDisplay activePlayer" id="p1">                  
+                             <div class="mainDisplay">
+                                <p class="playerNameDisplay">
+                                    Player 1
+                                </p>
+                                    <div class="playerHandDisplay" id="p1HandDisplay">
+                                       <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                    </div>
+                                </div>
+                            <div class="chamberDisplay">
+                                <p id="p1ChamberDisplay">
+                                    6/6
+                                </p>
+                            </div>
+                        </div>
+                        <div class="playerDisplay" id="p2"> 
+                           <div class="mainDisplay">
+                                <p class="playerNameDisplay">
+                                    Player 2
+                                </p>
+                                <div class="playerHandDisplay" id="p2HandDisplay">
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                </div>
+                            </div>
+                        <div class="chamberDisplay" id="p2ChamberDisplay">
+                            <p>
+                                6/6
+                            </p>
+                        </div>
+                    </div>
+                    <div class="playerDisplay" id="p3">                            
+                        <div class="mainDisplay">
+                                <p class="playerNameDisplay">
+                                    Player 3
+                                </p>
+                                    <div class="playerHandDisplay" id="p3HandDisplay">
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                        <div class="cardDisplayMini cardFlipped"></div>
+                                    </div>
+                                </div>
+                            <div class="chamberDisplay" id="p3ChamberDisplay">
+                                <p>
+                                    6/6
+                                </p>
+                            </div>
+                        </div>
+                        <div class="playerDisplay" id="p4">                            
+                            <div class="mainDisplay">
+                            <p class="playerNameDisplay">
+                                Player 4
+                            </p>
+                                <div class="playerHandDisplay" id="p4HandDisplay">
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                    <div class="cardDisplayMini cardFlipped"></div>
+                                </div>
+                            </div>
+                        <div class="chamberDisplay" id="p4ChamberDisplay">
+                            <p>
+                                6/6
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
