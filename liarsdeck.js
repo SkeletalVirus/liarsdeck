@@ -157,10 +157,32 @@ function switchToNextActivePlayer() {
         switchToNextActivePlayer()
     }
     
-    // if (lastPlayed.player != '') {
-        //     liarBtn.filter = 'grayscale(0%)'
-        // }
-    }
+    switch(activePlayer) {
+        case player1:
+            if (player2.hand.length < 1 && player3.hand.length < 1 && player4.hand.length < 1) {
+                callLiar(activePlayer)
+            }
+            break
+        case player2:
+            if (player1.hand.length < 1 && player3.hand.length < 1 && player4.hand.length < 1) {
+                callLiar(activePlayer)
+            }
+            break
+        case player3:
+            if (player2.hand.length < 1 && player1.hand.length < 1 && player4.hand.length < 1) {
+                callLiar(activePlayer)
+            }
+            break
+        case player4:
+            if (player2.hand.length < 1 && player3.hand.length < 1 && player1.hand.length < 1) {
+                callLiar(activePlayer)
+            }
+            break
+    }    
+
+    skipTurnBtn.classList.remove('disabled')
+    liarBtn.classList.remove('disabled')
+}
     
     function playCards(player) {
         const cardsRaw = document.getElementsByClassName('selected');
@@ -320,6 +342,10 @@ function callLiar(player) {
     nextRoundBtn.addEventListener('click', startRound)
     nextRoundBtn.appendChild(nextRoundBtnText)
     handDisplay.appendChild(nextRoundBtn)
+
+    playHandBtn.classList.add('disabled')
+    liarBtn.classList.add('disabled')
+    skipTurnBtn.classList.add('disabled')
 }
 
 function decrementChamber(player) {
@@ -346,15 +372,19 @@ function decrementChamber(player) {
         switch (player) {
             case player1:
                 p1Display.classList.add('deadPlayer')
+                p1Display.style.filter = 'grayscale(100%)'
                 break
             case player2:
                 p2Display.classList.add('deadPlayer')
+                p2Display.style.filter = 'grayscale(100%)'
                 break
             case player3:
                 p3Display.classList.add('deadPlayer')
+                p3Display.style.filter = 'grayscale(100%)'
                 break
             case player4:
                 p4Display.classList.add('deadPlayer')
+                p4Display.style.filter = 'grayscale(100%)'
                 break
         }
     }
@@ -403,11 +433,17 @@ function giveCards() {
     }
 }
 
+function showHand() {
+    skipTurnBtn.classList.add('disabled')
+    playHandBtn.classList.remove('disabled')
+    giveCards(activePlayer)
+}
+
 function changeActivePlayer(player) {
     activePlayer = player
     const showHandButton = document.createElement('button')
     showHandButton.classList.add('gameButton')
-    showHandButton.addEventListener('click', giveCards)
+    showHandButton.addEventListener('click', showHand)
     const showHandButtonText = document.createElement('p')
     showHandButtonText.innerHTML = 'Show Hand'
     showHandButton.appendChild(showHandButtonText)
@@ -432,21 +468,33 @@ function changeActivePlayer(player) {
     }
     console.log(`active player changed to ${activePlayer.name}`)
 
+    skipTurnBtn.classList.add('disabled')
+
 }
 
 function startRound() {
     initiateDeck()
     handDisplay.innerHTML = ''
+
     
     player1.hand = []
     player2.hand = []
     player3.hand = []
     player4.hand = []
     
-    giveHand(player1)
-    giveHand(player2)
-    giveHand(player3)
-    giveHand(player4)
+
+    if (player1.dead != true) {
+        giveHand(player1)
+    }
+    if (player2.dead != true) {
+        giveHand(player2)
+    }
+    if (player3.dead != true) {
+        giveHand(player3)
+    }
+    if (player4.dead != true) {
+        giveHand(player4)
+    }
     
     document.getElementById('p1HandDisplay').innerHTML = ''
     document.getElementById('p2HandDisplay').innerHTML = ''
@@ -468,21 +516,89 @@ function startRound() {
         lastPlayed.player = ''
         lastPlayed.card = []
 
-    changeActivePlayer(player1)
+    if (player1.dead != true) {
+        changeActivePlayer(player1)
+    }
+    else if (player2.dead != true) {
+        changeActivePlayer(player2)
+    }
+    else if (player3.dead != true) {
+        changeActivePlayer(player3)
+    }
+    else if (player4.dead != true) {
+        changeActivePlayer(player4)
+    }
+
+    switch(activePlayer) {
+        case player1:
+            if (player2.dead === true && player3.dead === true && player4.dead === true) {
+                winScreen(activePlayer)    
+            }
+            break
+        case player2:
+            if (player1.dead === true && player3.dead === true && player4.dead === true) {
+                winScreen(activePlayer)    
+            }
+            break
+        case player3:
+            if (player1.dead === true && player2.dead === true && player4.dead === true) {
+                winScreen(activePlayer)    
+            }
+            break
+        case player4:
+            if (player1.dead === true && player2.dead === true && player3.dead === true) {
+                winScreen(activePlayer)    
+            }
+            break
+    }   
     
     const showHandButton = document.createElement('button')
     showHandButton.classList.add('gameButton')
-    showHandButton.addEventListener('click', giveCards)
+    showHandButton.addEventListener('click', showHand)
     const showHandButtonText = document.createElement('p')
     showHandButtonText.innerHTML = 'Show Hand'
     showHandButton.appendChild(showHandButtonText)
     handDisplay.innerHTML = ''
     handDisplay.appendChild(showHandButton)
+
+    skipTurnBtn.classList.remove('disabled')
+    skipTurnBtn.classList.remove('disabled')
     
     console.log(`${player1.name}: \n----------------- \nHand: ${player1.hand}\nChambers: ${player1.chambers}\n`)
     console.log(`${player2.name}: \n----------------- \nHand: ${player2.hand}\nChambers: ${player2.chambers}\n`)
     console.log(`${player3.name}: \n----------------- \nHand: ${player3.hand}\nChambers: ${player3.chambers}\n`)
     console.log(`${player4.name}: \n----------------- \nHand: ${player4.hand}\nChambers: ${player4.chambers}\n`)
+}
+
+function winScreen(player) {
+    const winScreen = document.createElement('div')
+    const winScreenContent = document.createElement('div')
+    const winText = document.createElement('p')
+    const winnerName = document.createElement('p')
+    const playAgainBtn = document.createElement('button')
+    const btnText = document.createElement('p')
+
+    winScreen.classList.add('winScreen')
+    winnerName.innerHTML = activePlayer.name
+    winText.innerHTML = 'WIN'
+    playAgainBtn.classList.add('gameButton')
+    playAgainBtn.addEventListener('click', reloadPage)
+    btnText.innerHTML = 'Play Again'
+
+    winScreenContent.appendChild(winnerName)
+    playAgainBtn.appendChild(btnText)
+    winScreen.appendChild(winText)
+    winScreen.appendChild(winScreenContent)
+    winScreen.appendChild(playAgainBtn)
+    mainField.appendChild(winScreen)
+
+    playHandBtn.classList.add('disabled')
+    liarBtn.classList.add('disabled')
+    skipTurnBtn.classList.add('disabled')
+}
+
+function reloadPage() {
+    location.reload()
 }
 
 function startGame() {
@@ -492,10 +608,6 @@ function startGame() {
         players[1] = document.getElementById('player2Name').value
         players[2] = document.getElementById('player3Name').value
         players[3] = document.getElementById('player4Name').value
-    
-        liarBtn.classList.remove('debugHidden')
-        playHandBtn.classList.remove('debugHidden')
-        skipTurnBtn.classList.remove('debugHidden')
         
         initiatePlayers()
         startRound()

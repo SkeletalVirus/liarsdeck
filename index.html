@@ -43,6 +43,11 @@
                         Force Start New Round
                     </p>
                 </button>
+                <button onclick="winScreen(player1)">
+                    <p>
+                        Show Win Screen
+                    </p>
+                </button>
             </div>
             <div class="header">                
                 <p>Liars Deck</p>
@@ -58,7 +63,7 @@
                             <p>
                                 Player 1:
                             </p>
-                            <textarea name="Player 1 Name" id="player1Name" maxlength="16" rows="1" placeholder="Player 1 Name Here"></textarea>
+                            <textarea name="Player 1 Name" id="player1Name" maxlength="24" rows="1" placeholder="Player 1 Name Here"></textarea>
                         </div>
                         <div class="playerNameSelector">
                             <p>
@@ -87,12 +92,12 @@
                 </div>
                 <div class="fieldBottom">
                     <div class="buttons" style="justify-self: flex-start;">
-                        <button class="gameButton debugHidden" id="playHandBtn" onclick="playCards(activePlayer)">
+                        <button class="gameButton disabled" id="playHandBtn" onclick="playCards(activePlayer)">
                             <p>
                                 Play Hand
                             </p>
                         </button>
-                        <button class="gameButton debugHidden" id="liarBtn" onclick="callLiar(activePlayer)">
+                        <button class="gameButton disabled" id="liarBtn" onclick="callLiar(activePlayer)">
                             <p>
                                 Call Liar
                             </p>
@@ -102,7 +107,7 @@
                                 Debug Menu
                             </p>
                         </button>
-                        <button class="gameButton debugHidden" id="skipTurnBtn" onclick="switchToNextActivePlayer()">
+                        <button class="gameButton disabled" id="skipTurnBtn" onclick="switchToNextActivePlayer()">
                             <p>
                                 Skip Turn
                             </p>
