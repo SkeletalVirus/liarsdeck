@@ -3,8 +3,12 @@ const deck = []
 let table = ''
 let lastPlayed = {
     player: '',
-    card: ''
+    card: '',
+    exodia: false
 }
+
+let exodiaMode = false
+
 let activePlayer
 
 const handDisplay = document.getElementsByClassName('currentHand')[0]
@@ -18,6 +22,7 @@ const p4Display = document.getElementById('p4')
 const liarBtn = document.getElementById('liarBtn')
 const playHandBtn = document.getElementById('playHandBtn')
 const skipTurnBtn = document.getElementById('skipTurnBtn')
+const playExodiaBtn = document.getElementById('playExodiaBtn')
 
 function openDebug() {
     document.getElementsByClassName('debug')[0].classList.toggle('debugHidden')
@@ -97,6 +102,7 @@ function initiateDeck() {
 
     const tablePossibilities = ['king', 'queen', 'jack']
     table = tablePossibilities[Math.floor(Math.random() * tablePossibilities.length)]
+    console.log(`Current Table is ${table}`)
 }
 
 function giveHand(player) {
@@ -184,7 +190,7 @@ function switchToNextActivePlayer() {
     liarBtn.classList.remove('disabled')
 }
     
-    function playCards(player) {
+function playCards(player) {
         const cardsRaw = document.getElementsByClassName('selected');
     const cardsRemoveFromHand = [];
     const cards = [];
@@ -216,6 +222,7 @@ function switchToNextActivePlayer() {
         // Uncomment and adjust if you want to update `lastPlayed` with the played cards
         lastPlayed.player = player.name;
         lastPlayed.card = cards;
+        lastPlayed.exodia = false
 
         for (let i = 0; i < lastPlayed.card.length; i++) {
             const displayCard = document.createElement('div')
@@ -308,6 +315,256 @@ function switchToNextActivePlayer() {
     }
 }
 
+function playCards(player) {
+    const cardsRaw = document.getElementsByClassName('selected');
+    const cardsRemoveFromHand = [];
+    const cards = [];
+
+
+    if (cardsRaw.length <= 3 && cardsRaw.length > 0) {
+        // Collect selected card IDs and their types
+        for (let i = 0; i < cardsRaw.length; i++) {
+            const card = parseInt(cardsRaw[i].id); // Convert ID to integer index
+            const cardType = player.hand[card];
+            cards.push(cardType);
+            cardsRemoveFromHand.push(card);
+
+            console.log(card);
+            console.log(cardType);
+        }
+
+        // Create newHand by excluding indexes in cardsRemoveFromHand
+        const newHand = player.hand
+            .map((_, index) => index)
+            .filter(index => !cardsRemoveFromHand.includes(index))
+            .map(index => player.hand[index]); // Map back to actual cards
+
+
+        handDisplay.innerHTML = ''
+        mainField.innerHTML = ''
+
+
+        // Uncomment and adjust if you want to update `lastPlayed` with the played cards
+        lastPlayed.player = player.name;
+        lastPlayed.card = cards;
+        lastPlayed.exodia = false
+
+        for (let i = 0; i < lastPlayed.card.length; i++) {
+            const displayCard = document.createElement('div')
+            displayCard.classList.add('cardDisplay')
+
+            switch (lastPlayed.card[i]) {
+                case 'king':
+                    displayCard.classList.add('king')
+                    break
+                case 'queen':
+                    displayCard.classList.add('queen')
+                    break
+                case 'jack':
+                    displayCard.classList.add('jack')
+                    break
+                case 'wild':
+                    displayCard.classList.add('wild')
+                    break
+            }
+
+            displayCard.classList.add('cardFlipped')
+            // displayCard.addEventListener('click', this.classList.toggle('cardFlipped'))
+            mainField.appendChild(displayCard)
+        }
+        // Update player's hand
+        player.hand = newHand;
+
+        giveCards(player)
+
+        switch (lastPlayed.player) {
+            case player1.name:
+                if (!player1.hand.length <= 0) {
+                    document.getElementById('p1HandDisplay').innerHTML = ''
+                    for (let i = 0; i < player1.hand.length; i++) {
+                        const playerHandDisplayCard = document.createElement('div')
+                        playerHandDisplayCard.classList.add('cardDisplayMini')
+                        playerHandDisplayCard.classList.add('cardFlipped')
+                        document.getElementById('p1HandDisplay').appendChild(playerHandDisplayCard)
+                    }
+                }
+                else {
+                    document.getElementById('p1HandDisplay').innerHTML = ''
+                    console.log('player 1 has cleared their hand')
+                }
+            case player2.name:
+                if (!player2.hand.length <= 0) {
+                    document.getElementById('p2HandDisplay').innerHTML = ''
+                    for (let i = 0; i < player2.hand.length; i++) {
+                        const playerHandDisplayCard = document.createElement('div')
+                        playerHandDisplayCard.classList.add('cardDisplayMini')
+                        playerHandDisplayCard.classList.add('cardFlipped')
+                        document.getElementById('p2HandDisplay').appendChild(playerHandDisplayCard)
+                    }
+                }
+                else {
+                    document.getElementById('p2HandDisplay').innerHTML = ''
+                }
+            case player3.name:
+                if (!player3.hand.length <= 0) {
+                    document.getElementById('p3HandDisplay').innerHTML = ''
+                    for (let i = 0; i < player3.hand.length; i++) {
+                        const playerHandDisplayCard = document.createElement('div')
+                        playerHandDisplayCard.classList.add('cardDisplayMini')
+                        playerHandDisplayCard.classList.add('cardFlipped')
+                        document.getElementById('p3HandDisplay').appendChild(playerHandDisplayCard)
+                    }
+                }
+                else {
+                    document.getElementById('p3HandDisplay').innerHTML = ''
+                }
+            case player4.name:
+                if (!player4.hand.length <= 0) {
+                    document.getElementById('p4HandDisplay').innerHTML = ''
+                    for (let i = 0; i < player4.hand.length; i++) {
+                        const playerHandDisplayCard = document.createElement('div')
+                        playerHandDisplayCard.classList.add('cardDisplayMini')
+                        playerHandDisplayCard.classList.add('cardFlipped')
+                        document.getElementById('p4HandDisplay').appendChild(playerHandDisplayCard)
+                    }
+                }
+                else {
+                    document.getElementById('p4HandDisplay').innerHTML = ''
+                }
+        }
+        console.log(player.hand)
+        console.log(lastPlayed)
+        console.log(lastPlayed.player)
+
+        switchToNextActivePlayer()
+    }
+}
+
+function playExodia(player) {
+    const cardsRaw = document.getElementsByClassName('selected');
+const cardsRemoveFromHand = [];
+const cards = [];
+
+
+if (cardsRaw.length === 5) {
+    // Collect selected card IDs and their types
+    for (let i = 0; i < cardsRaw.length; i++) {
+        const card = parseInt(cardsRaw[i].id); // Convert ID to integer index
+        const cardType = player.hand[card];
+        cards.push(cardType);
+        cardsRemoveFromHand.push(card);
+
+        console.log(card);
+        console.log(cardType);
+    }
+
+    // Create newHand by excluding indexes in cardsRemoveFromHand
+    const newHand = player.hand
+        .map((_, index) => index)
+        .filter(index => !cardsRemoveFromHand.includes(index))
+        .map(index => player.hand[index]); // Map back to actual cards
+
+
+    handDisplay.innerHTML = ''
+    mainField.innerHTML = ''
+
+
+    // Uncomment and adjust if you want to update `lastPlayed` with the played cards
+    lastPlayed.player = player.name;
+    lastPlayed.card = cards;
+    lastPlayed.exodia = true
+
+    for (let i = 0; i < lastPlayed.card.length; i++) {
+        const displayCard = document.createElement('div')
+        displayCard.classList.add('cardDisplay')
+
+        switch (lastPlayed.card[i]) {
+            case 'king':
+                displayCard.classList.add('king')
+                break
+            case 'queen':
+                displayCard.classList.add('queen')
+                break
+            case 'jack':
+                displayCard.classList.add('jack')
+                break
+            case 'wild':
+                displayCard.classList.add('wild')
+                break
+        }
+
+        displayCard.classList.add('cardFlipped')
+        // displayCard.addEventListener('click', this.classList.toggle('cardFlipped'))
+        mainField.appendChild(displayCard)
+    }
+    // Update player's hand
+    player.hand = newHand;
+
+    giveCards(player)
+
+    switch (lastPlayed.player) {
+        case player1.name:
+            if (!player1.hand.length <= 0) {
+                document.getElementById('p1HandDisplay').innerHTML = ''
+                for (let i = 0; i < player1.hand.length; i++) {
+                    const playerHandDisplayCard = document.createElement('div')
+                    playerHandDisplayCard.classList.add('cardDisplayMini')
+                    playerHandDisplayCard.classList.add('cardFlipped')
+                    document.getElementById('p1HandDisplay').appendChild(playerHandDisplayCard)
+                }
+            }
+            else {
+                document.getElementById('p1HandDisplay').innerHTML = ''
+                console.log('player 1 has cleared their hand')
+            }
+        case player2.name:
+            if (!player2.hand.length <= 0) {
+                document.getElementById('p2HandDisplay').innerHTML = ''
+                for (let i = 0; i < player2.hand.length; i++) {
+                    const playerHandDisplayCard = document.createElement('div')
+                    playerHandDisplayCard.classList.add('cardDisplayMini')
+                    playerHandDisplayCard.classList.add('cardFlipped')
+                    document.getElementById('p2HandDisplay').appendChild(playerHandDisplayCard)
+                }
+            }
+            else {
+                document.getElementById('p2HandDisplay').innerHTML = ''
+            }
+        case player3.name:
+            if (!player3.hand.length <= 0) {
+                document.getElementById('p3HandDisplay').innerHTML = ''
+                for (let i = 0; i < player3.hand.length; i++) {
+                    const playerHandDisplayCard = document.createElement('div')
+                    playerHandDisplayCard.classList.add('cardDisplayMini')
+                    playerHandDisplayCard.classList.add('cardFlipped')
+                    document.getElementById('p3HandDisplay').appendChild(playerHandDisplayCard)
+                }
+            }
+            else {
+                document.getElementById('p3HandDisplay').innerHTML = ''
+            }
+        case player4.name:
+            if (!player4.hand.length <= 0) {
+                document.getElementById('p4HandDisplay').innerHTML = ''
+                for (let i = 0; i < player4.hand.length; i++) {
+                    const playerHandDisplayCard = document.createElement('div')
+                    playerHandDisplayCard.classList.add('cardDisplayMini')
+                    playerHandDisplayCard.classList.add('cardFlipped')
+                    document.getElementById('p4HandDisplay').appendChild(playerHandDisplayCard)
+                }
+            }
+            else {
+                document.getElementById('p4HandDisplay').innerHTML = ''
+            }
+    }
+    console.log(player.hand)
+    console.log(lastPlayed)
+    console.log(lastPlayed.player)
+
+    switchToNextActivePlayer()
+}
+}
+
 function callLiar(player) {
     const matchingCards = []
     if (lastPlayed.card != '') {
@@ -365,45 +622,71 @@ function decrementChamber(player) {
     }
 
     const rouletteRoll = Math.floor(Math.random() * player.chambers)
-
-    player.chambers--
-    if (rouletteRoll === 0) {
+    if (lastPlayed.exodia = true) {
         player.dead = true
         switch (player) {
             case player1:
                 p1Display.classList.add('deadPlayer')
                 p1Display.style.filter = 'grayscale(100%)'
+                document.getElementById('p1ChamberDisplay').innerHTML = `Exodia`
                 break
             case player2:
                 p2Display.classList.add('deadPlayer')
                 p2Display.style.filter = 'grayscale(100%)'
+                document.getElementById('p2ChamberDisplay').innerHTML = `Exodia`
                 break
             case player3:
                 p3Display.classList.add('deadPlayer')
                 p3Display.style.filter = 'grayscale(100%)'
+                document.getElementById('p3ChamberDisplay').innerHTML = `Exodia`
                 break
             case player4:
                 p4Display.classList.add('deadPlayer')
                 p4Display.style.filter = 'grayscale(100%)'
+                document.getElementById('p4ChamberDisplay').innerHTML = `Exodia`
                 break
         }
     }
     else {
-        switch (player) {
-            case player1:
-                document.getElementById('p1ChamberDisplay').innerHTML = `${player.chambers}/6`
-                break
-            case player2:
-                document.getElementById('p2ChamberDisplay').innerHTML = `${player.chambers}/6`
-                break
-            case player3:
-                document.getElementById('p3ChamberDisplay').innerHTML = `${player.chambers}/6`
-                break
-            case player4:
-                document.getElementById('p4ChamberDisplay').innerHTML = `${player.chambers}/6`
-                break
+        player.chambers--
+        if (rouletteRoll === 0) {
+            player.dead = true
+            switch (player) {
+                case player1:
+                    p1Display.classList.add('deadPlayer')
+                    p1Display.style.filter = 'grayscale(100%)'
+                    break
+                case player2:
+                    p2Display.classList.add('deadPlayer')
+                    p2Display.style.filter = 'grayscale(100%)'
+                    break
+                case player3:
+                    p3Display.classList.add('deadPlayer')
+                    p3Display.style.filter = 'grayscale(100%)'
+                    break
+                case player4:
+                    p4Display.classList.add('deadPlayer')
+                    p4Display.style.filter = 'grayscale(100%)'
+                    break
+            }
         }
-
+        else {
+            switch (player) {
+                case player1:
+                    document.getElementById('p1ChamberDisplay').innerHTML = `${player.chambers}/6`
+                    break
+                case player2:
+                    document.getElementById('p2ChamberDisplay').innerHTML = `${player.chambers}/6`
+                    break
+                case player3:
+                    document.getElementById('p3ChamberDisplay').innerHTML = `${player.chambers}/6`
+                    break
+                case player4:
+                    document.getElementById('p4ChamberDisplay').innerHTML = `${player.chambers}/6`
+                    break
+            }
+    
+        }
     }
     console.log(`Chambers: ${player.chambers} \nRoll: ${rouletteRoll}`)
     // console.log(player)
@@ -411,6 +694,30 @@ function decrementChamber(player) {
 
 function selectCard() {
     this.classList.toggle('selected')
+
+    if(exodiaMode === true) {
+        if(document.getElementsByClassName('selected').length === 5) {
+            const truthCards = []
+            const lieCards = []
+            for(let i = 0; i < activePlayer.hand.length; i++) {
+                if (activePlayer.hand[i] === table || activePlayer.hand[i] === 'wild') {
+                    truthCards.push(activePlayer.hand[i])
+                }
+                else {
+                    lieCards.push(activePlayer.hand[i])
+                }
+            }
+
+            if (truthCards.length === 5 || lieCards.length === 5) {
+                playHandBtn.classList.add('debugHidden')
+                playExodiaBtn.classList.remove('debugHidden')
+            }
+        }
+        else {
+            playHandBtn.classList.remove('debugHidden')
+            playExodiaBtn.classList.add('debugHidden')
+        }
+    }
 }
 
 function giveCards() {
@@ -469,7 +776,8 @@ function changeActivePlayer(player) {
     console.log(`active player changed to ${activePlayer.name}`)
 
     skipTurnBtn.classList.add('disabled')
-
+    playExodiaBtn.classList.add('debugHidden')
+    skipTurnBtn.classList.remove('debugHidden')
 }
 
 function startRound() {
@@ -603,6 +911,14 @@ function reloadPage() {
 
 function startGame() {
 
+    if(document.getElementById('exodiaMode').checked) {
+        exodiaMode = true
+    }
+
+    while (document.getElementsByClassName('setting').length > 0) {
+        document.getElementsByClassName('setting')[0].remove()
+    }
+
     if (document.getElementById('player1Name').value != '' && document.getElementById('player2Name').value != '') {
         players[0] = document.getElementById('player1Name').value
         players[1] = document.getElementById('player2Name').value
@@ -611,6 +927,9 @@ function startGame() {
         
         initiatePlayers()
         startRound()
+
+        // player1.hand = ['wild', 'wild', 'wild', 'wild', 'wild']
+        // player1.hand = ['king', 'king', 'king', 'king', 'king']
     }
     else {
         if (document.getElementsByClassName('startScreen')[0].children.length < 6) {

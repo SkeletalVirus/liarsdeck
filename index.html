@@ -83,7 +83,7 @@
                             </p>
                             <textarea name="Player 4 Name" id="player4Name" maxlength="16" rows="1" placeholder="Player 4 Name Here"></textarea>
                         </div>
-                        <button class="gameButton" onclick="startGame()">
+                        <button class="gameButton" id="startBtn" onclick="startGame()">
                             <p>
                                 Start Game
                             </p>
@@ -95,6 +95,11 @@
                         <button class="gameButton disabled" id="playHandBtn" onclick="playCards(activePlayer)">
                             <p>
                                 Play Hand
+                            </p>
+                        </button>
+                        <button class="gameButton debugHidden" id="playExodiaBtn" onclick="playExodia(activePlayer)">
+                            <p>
+                                EXODIA
                             </p>
                         </button>
                         <button class="gameButton disabled" id="liarBtn" onclick="callLiar(activePlayer)">
@@ -122,6 +127,11 @@
                     </div>
 
                     <div class="gameInfo" style="justify-self: flex-end;">
+                        <div class="setting" style="grid-row: 1;">
+                            <input type="checkbox" name="exodiaMode" id="exodiaMode">
+                            <label for="exodiaMode">Allow Exodia</label>
+                            <span class="checkbox"></span>
+                        </div>
                         <div class="playerDisplay activePlayer" id="p1">                  
                              <div class="mainDisplay">
                                 <p class="playerNameDisplay">

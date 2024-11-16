@@ -75,18 +75,25 @@ body {
     width: 15%;
     height: 90%;
     border-radius: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr auto;
+    row-gap: 5px;
 
     background-image: url(assets/redTableBackground.jpg);
     background-position: center;
     background-size: cover;
     padding: 25px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     align-items: center;
-    justify-content: space-between;
     box-shadow: 0px 10px 15px black;
 }
-.playerNameSelector {
+#startBtn {
+    justify-self: center;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row: 5;
+}
+.playerNameSelector, .setting {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -102,6 +109,7 @@ body {
     border-radius: 10px;
     box-shadow: 0px 10px 15px black;
     transition: 0.25s;
+    justify-self: center;
 
     p {
         margin: 10px;
@@ -113,6 +121,21 @@ body {
         box-shadow: 5px 5px 10px black;
     }
 }
+.playerNameSelector {
+    grid-column: 1;
+}
+.setting {
+    grid-column: 2;
+    font-size: 12pt;
+    flex-direction: row;
+    padding: 10px;
+
+    input {
+        cursor: pointer;
+        height: 12pt;
+        width: 12pt;
+    }
+}
 .playerNameSelector:hover {
     filter: brightness(110%)
 }
@@ -121,6 +144,18 @@ body {
     font-size: 16pt;
     text-shadow: 3px 3px 5px black;
     margin: 0;
+}
+#player1Name, #exodiaMode {
+    grid-row: 1;
+}
+#player2Name {
+    grid-row: 2;
+}
+#player3Name {
+    grid-row: 3;
+}
+#player4Name {
+    grid-row: 4;
 }
 
 .winScreen {
