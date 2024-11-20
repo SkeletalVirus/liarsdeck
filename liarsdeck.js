@@ -3,8 +3,7 @@ const deck = []
 let table = ''
 let lastPlayed = {
     player: '',
-    card: '',
-    exodia: false
+    card: ''
 }
 
 let exodiaMode = false
@@ -222,7 +221,6 @@ function playCards(player) {
         // Uncomment and adjust if you want to update `lastPlayed` with the played cards
         lastPlayed.player = player.name;
         lastPlayed.card = cards;
-        lastPlayed.exodia = false
 
         for (let i = 0; i < lastPlayed.card.length; i++) {
             const displayCard = document.createElement('div')
@@ -472,7 +470,6 @@ if (cardsRaw.length === 5) {
     // Uncomment and adjust if you want to update `lastPlayed` with the played cards
     lastPlayed.player = player.name;
     lastPlayed.card = cards;
-    lastPlayed.exodia = true
 
     for (let i = 0; i < lastPlayed.card.length; i++) {
         const displayCard = document.createElement('div')
@@ -600,7 +597,9 @@ function callLiar(player) {
     nextRoundBtn.appendChild(nextRoundBtnText)
     handDisplay.appendChild(nextRoundBtn)
 
+    playExodiaBtn.classList.add('debugHidden')
     playHandBtn.classList.add('disabled')
+    playHandBtn.classList.remove('debugHidden')
     liarBtn.classList.add('disabled')
     skipTurnBtn.classList.add('disabled')
 }
@@ -622,7 +621,7 @@ function decrementChamber(player) {
     }
 
     const rouletteRoll = Math.floor(Math.random() * player.chambers)
-    if (lastPlayed.exodia = true) {
+    if (lastPlayed.card.length > 3) {
         player.dead = true
         switch (player) {
             case player1:
